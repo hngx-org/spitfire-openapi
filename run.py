@@ -1,4 +1,4 @@
-from openai import create_app
+from openapi import create_app
 
 app = create_app()
 

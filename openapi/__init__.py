@@ -1,8 +1,4 @@
-import os
 from flask_sqlalchemy import SQLAlchemy
-from flask_session import Session
-from flask import Flask, session
-from openapi.config import App_Config
 from flask_cors import CORS
 
 # Create an instance of Swagger
