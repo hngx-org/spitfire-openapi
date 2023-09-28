@@ -1,4 +1,4 @@
-from openai import db
+from openapi import db
 
 class user(db.Model):
     __tablename__ = "user"
