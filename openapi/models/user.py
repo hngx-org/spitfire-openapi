@@ -1,7 +1,7 @@
 from openai import db
 
 class user(db.Model):
-    __tablenme__ = "user"
+    __tablename__ = "user"
 
 
     id = db.Colum(db.String(60), nullable=False, primary_key=True, unique=True)
