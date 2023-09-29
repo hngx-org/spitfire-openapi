@@ -9,6 +9,7 @@ auth = Blueprint("auth", __name__, url_prefix="/api/auth")
 def register():
 
     if request.method == "POST":
+        
         try:
             data = request.get_json()
             name = data.get("name")
