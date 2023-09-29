@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,session
 from openapi import db, bcrypt
 from openapi.models.user import User
+from openapi.utils import is_logged_in
 
 # url_prefix includes /api/auth before all endpoints in blueprint
 auth = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -25,6 +26,8 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
+            session["user"]={"id":new_user.id}
+
             return jsonify(
                 {
                     "status": "success",
@@ -39,10 +42,19 @@ def register():
                 jsonify(
                     {
                         "status": "failed",
-                        "message": "Error: User not created",
+                        "message": "Internal Error: User not created",
                     }
                 ),
-                400,
+                500,
             )
 
 
+# pylint: disable=broad-exception-caught
+@auth.route("/@me")
+def see_sess():
+    """
+    get the details of current logged in user
+    """
+    # lets get the user id of the currently loggedin user using is_logged_in helper
+    user_id = is_logged_in(session) 
+    pass
