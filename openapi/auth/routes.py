@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,session
 from openapi import db, bcrypt
 from openapi.models.user import User
+from openapi.utils import is_logged_in
 
 # url_prefix includes /api/auth before all endpoints in blueprint
 auth = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -39,7 +40,10 @@ def register():
                         "message": "Password confirmation does not match!"
                     }
                 ), 400
-
+              
+            confirm_password = data.get("confirm_password")
+            if password != confirm_password:
+                return jsonify({"Error": "Password and confirm_password do not match"}), 400
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
             email_exists = User.query.filter_by(email=email).first()
@@ -55,13 +59,15 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
+            session["user"]={"id":new_user.id}
+
             return jsonify(
                 {
                     "status": "success",
                     "message": "User Created Succesfully",
                     "data": new_user.format(),
                 }
-            )
+            ),201
 
         except Exception as error:
             print(f"{type(error).__name__}: {error}")
@@ -69,9 +75,20 @@ def register():
                 jsonify(
                     {
                         "status": "failed",
-                        "message": "Error: User not created",
+                        "message": "Internal Error: User not created",
                     }
                 ),
-                400,
-            )
+                500,
+            
 
+# pylint: disable=broad-exception-caught
+@auth.route("/@me")
+def see_sess():
+    """
+    get the details of current logged in user
+    """
+    # lets get the user id of the currently loggedin user using is_logged_in helper
+    user_id = is_logged_in(session) 
+    print(user_id)
+    pass
+    
