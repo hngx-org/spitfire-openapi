@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify, session
 from openapi import bcrypt
 from openapi.models.user import User
 
-auth = Blueprint("auth", __name__, url_prefix="/api/login")
+logins = Blueprint("logins", __name__, url_prefix="/api/login")
 
 
-@auth.route('/login', methods=['POST'])
+@logins.route('/login', methods=['POST'])
 def login():
     """
     The view function facilitates login an existing user.
