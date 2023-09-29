@@ -30,10 +30,12 @@ class User(db.Model):
         self.credit_spent = 0
 
     def has_subscription_rights(self):
+        """check if user has subscription rights this month"""
         current_month = datetime.now().month
         return self.subscription_start_date.month == current_month
 
     def can_use_ai_service(self, service_cost):
+        """check if user is allowed to use the ai service"""
         return self.credit_spent + service_cost <= self.credit_limit
 
     def insert(self):

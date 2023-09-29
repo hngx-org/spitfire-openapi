@@ -19,6 +19,7 @@ def test_has_subscription_rights():
     assert user.has_subscription_rights()
 
 def test_can_use_ai_service():
+    
     user = User(name="TestUser", email="test@example.com", password="test_password")
     user.credit_limit = 10
 
