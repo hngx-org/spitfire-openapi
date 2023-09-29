@@ -16,11 +16,10 @@ class User(db.Model):
     name = db.Column(db.String(60), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
 
-    def __init__(self, id, name, email, password):
-        self.id = id
+    def __init__(self, name, email, password):
         self.email = email
         self.name = name
-        self.set_password(password)
+        # self.password = set_password(password)
 
     def set_password(self, password):
         """
