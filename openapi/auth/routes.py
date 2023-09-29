@@ -79,7 +79,7 @@ def register():
                     }
                 ),
                 500,
-            
+            )
 
 # pylint: disable=broad-exception-caught
 @auth.route("/@me")
