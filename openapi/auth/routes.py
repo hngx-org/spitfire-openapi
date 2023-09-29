@@ -79,7 +79,7 @@ def register():
                     }
                 ),
                 500,
-            
+            )
 
 # pylint: disable=broad-exception-caught
 @auth.route("/@me")
@@ -91,4 +91,47 @@ def see_sess():
     user_id = is_logged_in(session) 
     print(user_id)
     pass
-    
+
+
+@auth.route('/logout')
+def logout_user():
+    """
+    This view function logs out the currently authenticated user.
+
+    This endpoint allows a user to log out, effectively clearing their session and
+    ending their authenticated session on the server.
+
+    Returns:
+        JSON response:
+        - If the user is successfully logged out: A JSON response with status 200 (OK)
+          and a success message.
+        - If the user is not logged in: A JSON response with status 401 (Unauthorized)
+          and an error message indicating that the user is not currently logged in.
+        - If an internal error occurs: A JSON response with status 500 (Internal Server Error)
+          and an error message indicating an internal server error.
+    """
+    try:
+        # Check if user is logged in
+        if is_logged_in(session):
+            # Clear session
+            session.clear()
+            return jsonify(
+                {
+                    "status": "success",
+                    "message": "User logged out Succesfully"
+                }
+            ), 200
+        else:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "User currently not logged in"
+                }
+            ), 401
+    except Exception as e:
+        return jsonify(
+            {
+                "status": "failed",
+                "message": "Internal Error"
+            }
+        ), 500
