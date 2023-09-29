@@ -34,9 +34,10 @@ def register():
             # Check if password and password confirmation match
             if password != password_confirm:
                 return jsonify(
-                    {"status": "error",
-                     "message": "Password confirmation does not match!"
-                     }
+                    {
+                        "status": "error",
+                        "message": "Password confirmation does not match!"
+                    }
                 ), 400
 
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -45,8 +46,8 @@ def register():
             if email_exists:
                 return jsonify(
                     {
-                    "status": "error", 
-                    "message": "Email already exists!"
+                        "status": "error", 
+                        "message": "Email already exists!"
                     }
                 ), 400
 
