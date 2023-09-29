@@ -1,7 +1,8 @@
-from flask import Blueprint, request, session,jsonify
+from flask import Blueprint, request, session, jsonify
 import openai
 from ..utils import chaaracter_validation
 from openai.error import RateLimitError
+
 # import os
 # from dotenv import load_dotenv
 
@@ -20,9 +21,9 @@ def gpt4():
     Process user input using the GPT-4 API and return the response as a JSON object.
 
     :return: JSON object with the response from the GPT-4 API
-    # """
+    #"""
     # user_input = request.args.get('user_input') if request.method == 'GET' else request.form['user_input']
-    
+
     req = request.get_json()
     user_input = chaaracter_validation(user_input= req.get("user_input"))
     messages = [{"role": "user", "content": user_input}]
