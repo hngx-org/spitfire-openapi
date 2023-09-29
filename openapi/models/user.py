@@ -1,11 +1,15 @@
 from openapi import db
 import bcrypt
+from uuid import uuid4
 
+def generate_uuid():
+
+    return uuid4().hex
 class User(db.Model):
     __tablename__ = "users"
 
 
-    id = db.Column(db.String(60), nullable=False, primary_key=True, unique=True)
+    id = db.Column(db.String(60), nullable=False, primary_key=True, unique=True, default=generate_uuid)
     email = db.Column(db.String(320), nullable=False, unique=True)
     name = db.Column(db.String(60), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False, unique=True)
