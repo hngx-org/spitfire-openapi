@@ -3,8 +3,10 @@ import bcrypt
 from uuid import uuid4
 
 def generate_uuid():
-
     return uuid4().hex
+
+
+
 class User(db.Model):
     __tablename__ = "users"
 
@@ -12,7 +14,7 @@ class User(db.Model):
     id = db.Column(db.String(60), nullable=False, primary_key=True, unique=True, default=generate_uuid)
     email = db.Column(db.String(320), nullable=False, unique=True)
     name = db.Column(db.String(60), nullable=False, unique=True)
-    password = db.Column(db.String(128), nullable=False, unique=True)
+    password = db.Column(db.String(128), nullable=False)
 
     def __init__(self, id, name, email, password):
         self.id = id
