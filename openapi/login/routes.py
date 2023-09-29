@@ -40,7 +40,7 @@ def login():
     if user is None:
         return jsonify({"message": "User with this email does not exist"}), 404
     if bcrypt.check_password_hash(user.password, password):
-        session["user_id"] = user.id
+        session["user"] = {"id": user.id}
         return (
                 jsonify(
                     {
