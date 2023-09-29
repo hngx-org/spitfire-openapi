@@ -91,4 +91,36 @@ def see_sess():
     user_id = is_logged_in(session) 
     print(user_id)
     pass
+
+
+@auth.route('/logout')
+def logout_user():
+    """
     
+    """
+    try:
+        # Check if user is logged in
+        if is_logged_in(session):
+            # Clear session
+            session.clear()
+            return jsonify(
+                {
+                    "status": "success",
+                    "message": "User logged out Succesfully"
+                }
+            ), 200
+        else:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "User currently not logged in"
+                }
+            ), 401
+    except Exception as e:
+        return jsonify(
+            {
+                "status": "failed",
+                "message": "Internal Error"
+            }
+        ), 500
+
