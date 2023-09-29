@@ -1,8 +1,8 @@
 from openapi import db
 import bcrypt
 
-class user(db.Model):
-    __tablename__ = "user"
+class User(db.Model):
+    __tablename__ = "users"
 
 
     id = db.Column(db.String(60), nullable=False, primary_key=True, unique=True)
