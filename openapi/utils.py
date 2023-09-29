@@ -1,3 +1,8 @@
+"""
+summary
+"""
+from openapi.errors.handlers import CustomError
+
 def is_logged_in(session):
     """
     Ensures a user is logged in or returns error
@@ -10,7 +15,6 @@ def is_logged_in(session):
         id(str):
             - logged in users id
     """
-    # user = session.get("user")
     user = session.get("user")
 
     if not user:

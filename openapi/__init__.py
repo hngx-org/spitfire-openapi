@@ -41,8 +41,10 @@ def create_app():
     bcrypt.init_app(app)
 
     from openapi.auth.routes import auth
+    from openapi.errors.handlers import error
 
     app.register_blueprint(auth)
+    app.register_blueprint(error)
     
     # create db tables from models if not exists
     with app.app_context():

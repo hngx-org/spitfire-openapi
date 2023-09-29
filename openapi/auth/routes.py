@@ -34,7 +34,7 @@ def register():
                     "message": "User Created Succesfully",
                     "data": new_user.format(),
                 }
-            )
+            ),201
 
         except Exception as error:
             print(f"{type(error).__name__}: {error}")
@@ -57,4 +57,6 @@ def see_sess():
     """
     # lets get the user id of the currently loggedin user using is_logged_in helper
     user_id = is_logged_in(session) 
+    print(user_id)
     pass
+    
