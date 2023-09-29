@@ -1,13 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask import Flask
+import os
 
 # Create an instance of Swagger
 
 db = SQLAlchemy()
-
-
-
 
 def create_app():
     """
@@ -17,7 +15,9 @@ def create_app():
     :return: app
     """
     # Initialize Flask-
+
     app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///spitfire.db')
     
     # Initialize CORS
     CORS(app, supports_credentials=True)
