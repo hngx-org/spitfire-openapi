@@ -1,13 +1,13 @@
 from openapi import db
 
-class user(db.Model):
-    __tablename__ = "user"
+class User(db.Model):
+    __tablename__ = "users"
 
 
-    id = db.Colum(db.String(60), nullable=False, primary_key=True, unique=True)
-    email = db.Colum(db.String(320), nullable=False, unique=True)
-    name = db.Colum(db.String(60), nullable=False, unique=True)
-    password = db.Colum(db.String(20), nullable=False, primary_key=True, unique=True)
+    id = db.Column(db.String(60), nullable=False, primary_key=True, unique=True)
+    email = db.Column(db.String(320), nullable=False, unique=True)
+    name = db.Column(db.String(60), nullable=False, unique=True)
+    password = db.Column(db.String(120), nullable=False, unique=True)
 
     def __init__(self, id, name, email, password):
         self.id = id
