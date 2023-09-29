@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, session
 from openapi import db, bcrypt
 from openapi.models.user import User
 from openapi.errors.handlers import CustomError
-from openapi.utils import is_logged_in
+from openapi.utils import requires_auth
 
 # url_prefix includes /api/auth before all endpoints in blueprint
 auth = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -116,12 +116,12 @@ def login_user():
 
 # pylint: disable=broad-exception-caught
 @auth.route("/@me")
-def see_sess():
+# lets get the user id of the currently loggedin user using requires_auth wrapper
+@requires_auth(session)
+def see_sess(user_id):
     """
     get the details of current logged in user
     """
-    # lets get the user id of the currently loggedin user using is_logged_in helper
-    user_id = is_logged_in(session)
     try:
         user = User.query.filter_by(id=user_id).one_or_none()
         return (
