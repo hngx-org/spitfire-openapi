@@ -21,3 +21,11 @@ def is_logged_in(session):
         raise CustomError("Unauthorized", 401, "You are not logged in")
 
     return user.get("id")
+
+
+def chaaracter_validation(user_input):
+    word = user_input.split()
+    if len(word) <= 20:
+        return user_input
+    reduced_word = " ".join(word[:20])
+    return reduced_word
