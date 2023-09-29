@@ -15,6 +15,9 @@ def register():
             name = data.get("name")
             email = data.get("email")
             password = data.get("password")
+            confirm_password = data.get("confirm_password")
+            if password != confirm_password:
+                return jsonify({"Error": "Password and confirm_password do not match"})
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
             user = User.query.filter_by(name=name).first()
