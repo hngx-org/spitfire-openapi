@@ -19,34 +19,26 @@ class User(db.Model):
     def __init__(self, name, email, password):
         self.email = email
         self.name = name
+        self.password = password
         # self.password = set_password(password)
 
-    def set_password(self, password):
-        """
-        Set the password for the user.
-        Generate a salt and hash the password
+    # def set_password(self, password):
+    #     # Generate a salt and hash the password
+    #     salt = bcrypt.gensalt()
+    #     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    #     self.password = hashed_password.decode('utf-8')
 
-        Args:
-            password (str): The password to be set.
+    # def check_password(self, password):
+    #     """
+    #     Check if the provided password matches the stored hash.
 
-        Returns:
-            None
-        """
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-        self.password = hashed_password.decode('utf-8')
+    #     Args:
+    #         password (str): The password to be checked.
 
-    def check_password(self, password):
-        """
-        Check if the provided password matches the stored hash.
-
-        Args:
-            password (str): The password to be checked.
-
-        Returns:
-            bool: True if the password matches the stored hash, False otherwise.
-        """
-        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+    #     Returns:
+    #         bool: True if the password matches the stored hash, False otherwise.
+    #     """
+    #     return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
 
     def __repr__(self):

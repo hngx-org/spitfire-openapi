@@ -168,3 +168,6 @@ test_endpoints.py
 
 flask_session
 .vscode
+bruv
+instance/
+.DS_Store
