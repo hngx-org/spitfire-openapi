@@ -15,7 +15,7 @@ class User(db.Model):
 
     id = db.Column(db.String(60), nullable=False, primary_key=True, unique=True, default=generate_uuid)
     email = db.Column(db.String(320), nullable=False, unique=True)
-    name = db.Column(db.String(60), nullable=False, unique=True)
+    name = db.Column(db.String(60), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime(), default=datetime.utcnow, nullable=False)
