@@ -17,14 +17,13 @@ class App_Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "test")
     openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "SQLALCHEMY_DATABASE_URI", "sqlite:///test.db"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
 
-    SESSION_TYPE = "filesystem" if not os.getenv('PROD', None) else "sqlalchemy"
+    SESSION_TYPE = "filesystem" if not os.getenv("PROD", None) else "sqlalchemy"
     SESSION_USE_SIGNER = True
     SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_SAMESITE = "None"
