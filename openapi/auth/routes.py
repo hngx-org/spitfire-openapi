@@ -78,7 +78,7 @@ def register():
                         "message": "Internal Error: User not created",
                     }
                 ),
-                500,
+                500,)
             
 
 # pylint: disable=broad-exception-caught

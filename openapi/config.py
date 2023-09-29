@@ -4,6 +4,7 @@ summary
 import os
 import datetime
 from dotenv import load_dotenv
+import openai
 
 
 load_dotenv(".env")
@@ -14,6 +15,8 @@ class App_Config:
     """_summary_"""
 
     SECRET_KEY = os.environ.get("SECRET_KEY", "test")
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
+
 
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "SQLALCHEMY_DATABASE_URI", "sqlite:///test.db"
