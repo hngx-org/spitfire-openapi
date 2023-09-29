@@ -19,12 +19,21 @@ def login():
         JSON response:
         - If successful:
             A JSON response with status 200 (OK) and user data.
+        - If data field is inconsistent:
+            A JSON response with status 400 (Bad Request) and an error message.
         - If the user does not exist base on the email credential:
             A JSON response with status 404 (Not Found) and an error message.
         - If there's a password confirmation mismatch:
             A JSON response with status 400 (Bad Request) and an error message.
     """
     data = request.get_json()
+    # validate the data received
+    if "email" not in data or "password" not in data:
+        return jsonify(
+                {
+                    "status": "error",
+                    "message": "Missing required fields"
+                }), 400
     email = data.get("email")
     password = data.get("password")
     user = User.query.filter_by(email=email).first()
