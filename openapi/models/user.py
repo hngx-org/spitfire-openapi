@@ -19,6 +19,7 @@ class User(db.Model):
     def __init__(self, name, email, password):
         self.email = email
         self.name = name
+        self.password = password
         # self.password = set_password(password)
 
     # def set_password(self, password):
