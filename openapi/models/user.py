@@ -16,11 +16,11 @@ class User(db.Model):
         self.name = name
         self.password = password
 
-    def set_password(self, password):
-        # Generate a salt and hash the password
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-        self.password = hashed_password.decode('utf-8')
+    # def set_password(self, password):
+    #     # Generate a salt and hash the password
+    #     salt = bcrypt.gensalt()
+    #     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    #     self.password = hashed_password.decode('utf-8')
 
     def __repr__(self):
         return "Id: {}, name: {}, Email: {}".format(
