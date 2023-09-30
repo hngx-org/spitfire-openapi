@@ -26,7 +26,7 @@ def register():
         - If an error occurs during registration: A JSON response with status 400 (Bad Request) and an error message.
     """
 
-    data = request.get_json()
+    data = request.get_json() if request.get_json() != None else request.form
     name = data.get("name")
     email = data.get("email")
     password = data.get("password")
