@@ -88,3 +88,11 @@ def query_all(table):
         _type_: _description_
     """
     return db.session.execute(db.select(table)).scalars().all()
+
+
+def chaaracter_validation(user_input):
+    word = user_input.split()
+    if len(word) <= 20:
+        return user_input
+    # reduced_word = " ".join(word[:20])
+    raise CustomError("payload too long", 413, "the request body is too long") 
