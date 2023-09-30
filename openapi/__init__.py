@@ -27,7 +27,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(App_Config)
     if app.config["SQLALCHEMY_DATABASE_URI"]:
-        print(f"using db: {app.config['SQLALCHEMY_DATABASE_URI']}")
+        print(f"using db")
 
     # Initialize CORS
     CORS(app, supports_credentials=True)

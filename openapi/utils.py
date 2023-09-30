@@ -30,3 +30,11 @@ def requires_auth(session=None):
         return wrapper
 
     return is_logged_in_wrapper
+
+
+def chaaracter_validation(user_input):
+    word = user_input.split()
+    if len(word) <= 20:
+        return user_input
+    # reduced_word = " ".join(word[:20])
+    raise CustomError("payload too long", 413, "the request body is too long") 
