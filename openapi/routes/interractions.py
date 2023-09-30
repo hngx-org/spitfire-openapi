@@ -2,10 +2,11 @@ from flask import Blueprint, request, session, jsonify, Response
 import openai
 from ..utils import chaaracter_validation, handle_check_credits
 from openai.error import RateLimitError
+from collections import defaultdict
 
 conversation = Blueprint("interraction", __name__, url_prefix="/api/chat")
 
-
+chat_log = defaultdict(list)
 def generate_chat_completion(message):
     """
     Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
@@ -25,11 +26,14 @@ def generate_chat_completion(message):
         "Fine, thank you!"
     """
     messages = [
+        # {
+        #     "role": "system",
+        #     "content": "for context puposes my previous : what is Javascript?"
+        # },
         {
-            "role": "system",
-            "content": "for context puposes my previous : what is Javascript?",
-        },
-        {"role": "user", "content": message},
+            "role": "user",
+            "content": message
+        }
     ]
 
     response = openai.ChatCompletion.create(
@@ -58,13 +62,19 @@ def interractions(user):
         prompt = req["user_input"]
     else:
         return jsonify({"message": "Content-Type not supported!"}), 406
-
-    text = chaaracter_validation(prompt)
+    
+    
+    converse = chat_log.__getitem__(user.id)  # if this doesn't exist it will initialize a new entry in the cache memory chat_log
+    converse.append(f"user: {prompt }")
+    text_prompt = "\n".join(converse)
+    
+    
     try:
-        response = generate_chat_completion(message=text)
+        result= generate_chat_completion(message=text_prompt)
+        converse.append(f"AI: {result}")
         user.credits -= 1
         user.update()
-        return Response(response, content_type="text/plain"), 201
+        return Response(result, content_type="text/plain"), 201
     except RateLimitError:
         return (
             jsonify(
@@ -73,8 +83,5 @@ def interractions(user):
             400,
         )
     except Exception as e:
-        print(e)
-        return (
-            jsonify(content="An unexpected error occurred. Please try again later."),
-            500,
-        )
+        # print(e)
+        return jsonify(content="An unexpected error occurred. Please try again later."), 500
