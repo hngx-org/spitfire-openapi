@@ -1,11 +1,12 @@
 from flask import Blueprint, request, session, jsonify, Response
 import openai
-from ..utils import chaaracter_validation, requires_auth
+from ..utils import chaaracter_validation, requires_auth, query_one_filtered
 from openai.error import RateLimitError
+from collections import defaultdict
 
 conversation = Blueprint("interraction", __name__, url_prefix="/api/chat")
 
-
+chat_log = defaultdict(list)
 def generate_chat_completion(message):
     """
     Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
@@ -25,10 +26,10 @@ def generate_chat_completion(message):
         "Fine, thank you!"
     """
     messages = [
-        {
-            "role": "system",
-            "content": "for context puposes my previous : what is Javascript?"
-        },
+        # {
+        #     "role": "system",
+        #     "content": "for context puposes my previous : what is Javascript?"
+        # },
         {
             "role": "user",
             "content": message
@@ -49,7 +50,7 @@ def generate_chat_completion(message):
 #  completion route that handles user inputs and GPT-4 API interactions.
 @conversation.route('/completions', methods=[ 'POST'])
 @requires_auth(session)
-def interractions():
+def interractions(user_id):
     """
     Process user input using the GPT-4 API and return the response as a JSON object.
 
@@ -64,12 +65,18 @@ def interractions():
     else:
         return jsonify({"message": "Content-Type not supported!"}), 406
     
-    text = chaaracter_validation(prompt)
+    
+    converse = chat_log.__getitem__(user_id)  # if this doesn't exist it will initialize a new entry in the cache memory chat_log
+    converse.append(f"user: {prompt }")
+    text_prompt = "\n".join(converse)
+    
     
     try:
-        return Response(generate_chat_completion(message=text), content_type="text/plain"), 201
+        result= generate_chat_completion(message=text_prompt)
+        converse.append(f"AI: {result}")
+        return Response(result, content_type="text/plain"), 201
     except RateLimitError:
         return jsonify(content="The server is experiencing a high volume of requests. Please try again later."), 400
     except Exception as e:
-        print(e)
+        # print(e)
         return jsonify(content="An unexpected error occurred. Please try again later."), 500
