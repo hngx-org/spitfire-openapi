@@ -31,13 +31,15 @@ def register():
     email = data.get("email")
     password = data.get("password")
     confirm_password = data.get("confirm_password")
+    if not name or not email or not password:
+        raise CustomError("Bad Request", 400, "Missing required fields!")
 
     # Check if password and password confirmation match
     if password != confirm_password:
         raise CustomError("Bad Request", 400, "Passwords do not match!")
 
     try:
-        email_exists = User.query.filter_by(email=email).first()
+        email_exists = User.query.filter_by(email=email).one_or_none()
         if email_exists:
             return (
                 jsonify({"error": "Forbbiden", "message": "Email already exists!"}),
@@ -54,7 +56,6 @@ def register():
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": "User Created Succesfully",
                     "data": new_user.format(),
                 }
@@ -67,7 +68,7 @@ def register():
         return (
             jsonify(
                 {
-                    "status": "failed",
+                    "error": "failed",
                     "message": "Internal Error: User not created",
                 }
             ),
@@ -155,4 +156,4 @@ def logout_user():
 
     """
     session.pop("user", None)
-    return jsonify({"message": "success"}), 204
+    return jsonify({"message": "success"}), 200
