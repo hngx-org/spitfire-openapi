@@ -25,6 +25,7 @@ def create_app():
     # Initialize Flask-
 
     app = Flask(__name__)
+    app.config["SESSION_SQLALCHEMY"] = db
     app.config.from_object(App_Config)
     if app.config["SQLALCHEMY_DATABASE_URI"]:
         print(f"using db")
