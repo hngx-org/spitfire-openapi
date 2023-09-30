@@ -22,7 +22,7 @@ Welcome to the API documentation for our user and event management system. This 
 ### **Base Uri**
 ----
 ----
-temporarily hosted for live testing on **https://baseuri**
+temporarily hosted for live testing on **https://spitfire-openai.onrender.com**
 ....
 
 
@@ -95,7 +95,7 @@ The API handles errors gracefully and returns JSON responses with appropriate st
 - subsequent requests should come with the cookie in the request headers
 - session cookies expire after 30 days
 ### register User
-- **Endpoint**: **POST** api/auth/register
+- **Endpoint**: **POST** /api/auth/register
 - **Description**: Register new user account.
 - **Request Body**: 
     - **Input**: JSON with the following.
@@ -124,7 +124,7 @@ The API handles errors gracefully and returns JSON responses with appropriate st
 
 
 ### login User
-- **Endpoint**: **POST** api/auth/login
+- **Endpoint**: **POST** /api/auth/login
 - **Description**: login user account.
 - **Request Body**: 
     - **Input**: JSON with the following.
