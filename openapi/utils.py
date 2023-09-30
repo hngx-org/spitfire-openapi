@@ -1,7 +1,8 @@
 """
-summary
+Helper functions and decorators
 """
 from openapi.errors.handlers import CustomError
+from openapi.models.user import User
 from functools import wraps
 from openapi import db
 
@@ -32,6 +33,26 @@ def requires_auth(session=None):
 
     return is_logged_in_wrapper
 
+
+def handle_check_credits(session=None):
+    def chat_completion_wrapper(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            user = session.get("user")
+            if not user:
+                raise CustomError("Unauthorized", 401, "You are not logged in")
+            user_id = user.get("id")
+            user = User.query.get(user_id)
+            if user.credits <= 0:
+                raise CustomError("Forbidden", 403, "You do not have enough credits")
+
+            return f(user, *args, **kwargs)
+
+        return wrapper
+
+    return chat_completion_wrapper
+
+
 def query_one_filtered(table, **kwargs):
     """_summary_
 
@@ -41,9 +62,7 @@ def query_one_filtered(table, **kwargs):
     Returns:
         _type_: _description_
     """
-    return db.session.execute(
-        db.select(table).filter_by(**kwargs)
-    ).scalar_one_or_none()
+    return db.session.execute(db.select(table).filter_by(**kwargs)).scalar_one_or_none()
 
 
 # get all items from table based on filter
@@ -57,11 +76,7 @@ def query_all_filtered(table, **kwargs):
     Returns:
         _type_: _description_
     """
-    return (
-        db.session.execute(db.select(table).filter_by(**kwargs))
-        .scalars()
-        .all()
-    )
+    return db.session.execute(db.select(table).filter_by(**kwargs)).scalars().all()
 
 
 # get first one item from table no filter
@@ -95,4 +110,4 @@ def chaaracter_validation(user_input):
     if len(word) <= 20:
         return user_input
     # reduced_word = " ".join(word[:20])
-    raise CustomError("payload too long", 413, "the request body is too long") 
+    raise CustomError("payload too long", 413, "the request body is too long")

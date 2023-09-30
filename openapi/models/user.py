@@ -21,7 +21,7 @@ class User(db.Model):
     email = db.Column(db.String(320), nullable=False, unique=True)
     name = db.Column(db.String(60), nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    credit = db.Column(db.Integer(), default="3", nullable=False)
+    credits = db.Column(db.Integer(), default="3", nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.now, nullable=False)
     updated_at = db.Column(db.DateTime(), default=datetime.now, nullable=False)
 
@@ -32,9 +32,14 @@ class User(db.Model):
 
     def __repr__(self):
         return "id: {}, name: {}, email: {}, credit: {}, created_at: {},\
-              updated_at: {}".format(self.id, self.name, self.email,
-                                     self.credit, self.created_at,
-                                     self.updated_at)
+              updated_at: {}".format(
+            self.id,
+            self.name,
+            self.email,
+            self.credit,
+            self.created_at,
+            self.updated_at,
+        )
 
     def insert(self):
         db.session.add(self)
@@ -53,7 +58,7 @@ class User(db.Model):
             "id": self.id,
             "name": self.name,
             "email": self.email,
-            "credit": self.credit,
+            "credits": self.credits,
             "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "updated_at": self.updated_at,
         }

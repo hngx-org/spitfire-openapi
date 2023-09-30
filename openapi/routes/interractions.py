@@ -1,6 +1,6 @@
 from flask import Blueprint, request, session, jsonify, Response
 import openai
-from ..utils import chaaracter_validation, requires_auth, query_one_filtered
+from ..utils import chaaracter_validation, handle_check_credits
 from openai.error import RateLimitError
 from collections import defaultdict
 
@@ -37,36 +37,34 @@ def generate_chat_completion(message):
     ]
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        temperature=0.5,
-        max_tokens=200
+        model="gpt-3.5-turbo", messages=messages, temperature=0.5, max_tokens=200
     )
     return response["choices"][0]["message"]["content"].strip("\n").strip()
 
 
-
-
 #  completion route that handles user inputs and GPT-4 API interactions.
-@conversation.route('/completions', methods=[ 'POST'])
-@requires_auth(session)
-def interractions(user_id):
+@conversation.route("/completions", methods=["POST"])
+@handle_check_credits(session)
+def interractions(user):
     """
     Process user input using the GPT-4 API and return the response as a JSON object.
 
     :return: JSON object with the response from the GPT-4 API
     """
-    content_type = request.headers.get('Content-Type')
-    if content_type == 'application/json':
+    content_type = request.headers.get("Content-Type")
+    if content_type == "application/json":
         req = request.get_json()
-        if 'user_input' not in req:
-            return jsonify({"message": "Invalid request! Missing 'user_input' key."}), 400
-        prompt = req['user_input']
+        if "user_input" not in req:
+            return (
+                jsonify({"message": "Invalid request! Missing 'user_input' key."}),
+                400,
+            )
+        prompt = req["user_input"]
     else:
         return jsonify({"message": "Content-Type not supported!"}), 406
     
     
-    converse = chat_log.__getitem__(user_id)  # if this doesn't exist it will initialize a new entry in the cache memory chat_log
+    converse = chat_log.__getitem__(user.id)  # if this doesn't exist it will initialize a new entry in the cache memory chat_log
     converse.append(f"user: {prompt }")
     text_prompt = "\n".join(converse)
     
@@ -74,9 +72,16 @@ def interractions(user_id):
     try:
         result= generate_chat_completion(message=text_prompt)
         converse.append(f"AI: {result}")
+        user.credits -= 1
+        user.update()
         return Response(result, content_type="text/plain"), 201
     except RateLimitError:
-        return jsonify(content="The server is experiencing a high volume of requests. Please try again later."), 400
+        return (
+            jsonify(
+                content="The server is experiencing a high volume of requests. Please try again later."
+            ),
+            400,
+        )
     except Exception as e:
         # print(e)
         return jsonify(content="An unexpected error occurred. Please try again later."), 500
