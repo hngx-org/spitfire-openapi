@@ -48,7 +48,7 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(error)
     app.register_blueprint(conversation)
-    
+
     # create db tables from models if not exists
     with app.app_context():
         db.create_all()
