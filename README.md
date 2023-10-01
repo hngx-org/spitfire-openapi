@@ -23,7 +23,7 @@ Welcome to the API documentation for our user and event management system. This 
 ### **Base Uri**
 ----
 ----
-temporarily hosted for live testing on **https://spitfire-openai.onrender.com**
+temporarily hosted for live testing on **https://spitfire-interractions.onrender.com**
 ....
 
 
