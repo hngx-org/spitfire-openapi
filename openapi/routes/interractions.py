@@ -85,3 +85,8 @@ def interractions(user):
     except Exception as e:
         # print(e)
         return jsonify(content="An unexpected error occurred. Please try again later."), 500
+
+
+@conversation.route("/", methods=["GET"])
+def cron():
+    return {"hello":"world"}
