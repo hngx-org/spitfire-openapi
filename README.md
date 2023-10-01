@@ -11,6 +11,7 @@
      - 3.1.2 [login user](#login-user)
      - 3.1.3 [Get Logged in User Profile](#get-currently-logged-in-user-profile)
      - 3.1.4 [Logout User](#logout)
+4. [User Interraction](#user-interraction)
 4. [Authors](#authors)
 5. [Conclusion](#conclusion)
 
@@ -39,6 +40,16 @@ The API handles errors gracefully and returns JSON responses with appropriate st
   "message": "Invalid input data."
 }
 ```
+### 402 Payment Required
+- **Status Code**: 402
+- **Response**:
+
+```JSON
+{
+  "error": "Subscription Required",
+  "message": "You do not have enough credits"
+}
+```
 
 ### 405 Method Not Allowed
 - **Status Code**: 405
@@ -48,6 +59,17 @@ The API handles errors gracefully and returns JSON responses with appropriate st
 {
   "error": "Method Not Allowed",
   "message": "The HTTP method used is not allowed for this endpoint."
+}
+
+```
+### 413 Payload Too Long
+- **Status Code**: 413
+- **Response**:
+
+```JSON
+{
+  "error": "Payload Too Long",
+  "message": "The request body is too long"
 }
 
 ```
@@ -178,7 +200,29 @@ The API handles errors gracefully and returns JSON responses with appropriate st
       "message": "success",
     }
     ```
+## User Interractions 
+The API receives user Requests and acts as a bridge to gracefully transfer the requests to GPT-3.5 and the AI response is converted to JSON  by the API, which is then sent to the user with appropriate status codes.
 
+### Interractions
+-   **Endpoint: /api/chat/completions**
+-    **Description** Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
+- **Request Body**: 
+    - **Input**: JSON with the following.
+    ```JSON
+    {
+      "user_input": "what is spitfire?",
+    }
+    ```
+
+-    **Success Response:**
+    - **Status Code**: 201 (Created)
+   - **Response**:
+      ```JSON
+      {
+        "message": "Spitfire can refer to different things, so I'll cover a few possibilities"
+
+      }
+      ```
 ## Authors
 - [@Godhanded](https://github.com/Godhanded)
 - [@Freeman-kuch](https://github.com/Freeman-kuch)

@@ -44,7 +44,7 @@ def handle_check_credits(session=None):
             user_id = user.get("id")
             user = User.query.get(user_id)
             if user.credits <= 0:
-                raise CustomError("Forbidden", 403, "You do not have enough credits")
+                raise CustomError("Subscription Required", 402, "You do not have enough credits")
 
             return f(user, *args, **kwargs)
 
