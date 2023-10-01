@@ -74,7 +74,7 @@ def interractions(user):
         converse.append(f"AI: {result}")
         user.credits -= 1
         user.update()
-        return Response(result, content_type="text/plain"), 201
+        return jsonify({"message":result}), 201
     except RateLimitError:
         return (
             jsonify(
