@@ -41,7 +41,7 @@ def interractions(user):
     Process user input using the GPT-3.5-turbo API and return the response as a JSON object.
 
     :param user: The user object containing information about the current user.
-    :return: JSON object with the response from the GPT-4 API
+    :return: JSON object with the response from the GPT-3.5 model API
     """
     chat_logs = defaultdict(list)
     content_type = request.headers.get("Content-Type")
@@ -87,12 +87,12 @@ def interractions(user):
 
 @conversation.route("/", methods=["POST"])
 @handle_check_credits(session)
-def interractions(user):
+def string_completion(user):
     """
     Process user input using the GPT-3.5-turbo API and return the response as a JSON object.
 
     :param user: The user object containing information about the current user.
-    :return: JSON object with the response from the GPT-4 API
+    :return: JSON object with the response from the GPT-3.5-turbo model  API
     """
     content_type = request.headers.get("Content-Type")
     if content_type == "application/json":
@@ -136,4 +136,12 @@ def interractions(user):
 
 @conversation.route("/cron", methods=["GET"])
 def cron():
+    """
+    Returns a JSON object with the key "hello" and the value "world".
+
+    Example Usage:
+    ```python
+    GET /cron
+    ```
+    """
     return {"hello":"world"}
