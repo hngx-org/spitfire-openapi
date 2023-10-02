@@ -120,9 +120,10 @@ def string_completion(user):
         result = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", messages=messages, temperature=0.5, max_tokens=200
         )
+        response = result["choices"][0]["message"]["content"].strip("\n").strip()
         user.credits -= 1
         user.update()
-        return jsonify({"message":result}), 201
+        return jsonify({"message":response}), 201
     except RateLimitError:
         return (
             jsonify(
