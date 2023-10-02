@@ -42,13 +42,22 @@ def create_app():
     # Initialize Bcrypt
     bcrypt.init_app(app)
 
+    # Importing the models here so it can create the empty tables.
+    # The user table was created by default because it was already in use in
+    # the routes
+    from openapi.models.user import User
+    from openapi.models.analytics import Analytics
+    from openapi.models.payments import Payments
+
     from openapi.auth.routes import auth
     from openapi.errors.handlers import error
     from openapi.routes.interractions import conversation
+    from openapi.routes.analytics import analytics
 
     app.register_blueprint(auth)
     app.register_blueprint(error)
     app.register_blueprint(conversation)
+    app.register_blueprint(analytics)
 
     # create db tables from models if not exists
     with app.app_context():

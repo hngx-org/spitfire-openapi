@@ -3,6 +3,8 @@ Helper functions and decorators
 """
 from openapi.errors.handlers import CustomError
 from openapi.models.user import User
+from openapi.models.analytics import Analytics
+from datetime import date
 from functools import wraps
 from openapi import db
 
@@ -111,3 +113,14 @@ def chaaracter_validation(user_input):
         return user_input
     # reduced_word = " ".join(word[:20])
     raise CustomError("payload too long", 413, "the request body is too long")
+
+def get_current_analytics():
+    """Get the current day's analytic entry from the database"""
+    return db.session.execute(
+        db.select(Analytics)
+        .filter(
+            db.Cast(
+                Analytics.created_at, db.Date()
+            ) == date.today().strftime("%Y-%m-%d")
+        )
+    ).scalar_one_or_none()

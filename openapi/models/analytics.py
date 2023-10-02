@@ -6,12 +6,11 @@ class Analytics(BaseModel):
     __tablename__ = "analytics"
 
     openai_requests = db.Column(db.Integer(), default=0, nullable=False)
-    subscribers = db.Column(db.Integer(), defaault=0, nullable=False)
+    subscribers = db.Column(db.Integer(), default=0, nullable=False)
 
 
     def __repr__(self):
-        return "id: {}, openai_requests: {}, subscribers: {}, created_at: {},\
-              updated_at: {}".format(
+        return "id: {}, openai_requests: {}, subscribers: {}, created_at: {}, updated_at: {}".format(
             self.id,
             self.openai_requests,
             self.subscribers,
