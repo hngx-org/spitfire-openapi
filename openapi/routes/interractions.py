@@ -81,9 +81,59 @@ def interractions(user):
         )
     except Exception as e:
         return jsonify(content="An unexpected error occurred. Please try again later."), 500
+    
 
 
-@conversation.route("/", methods=["GET"])
+
+@conversation.route("/", methods=["POST"])
+@handle_check_credits(session)
+def interractions(user):
+    """
+    Process user input using the GPT-3.5-turbo API and return the response as a JSON object.
+
+    :param user: The user object containing information about the current user.
+    :return: JSON object with the response from the GPT-4 API
+    """
+    content_type = request.headers.get("Content-Type")
+    if content_type == "application/json":
+        req = request.get_json()
+        if "user_input" not in req:
+            return (
+                jsonify({"message": "Invalid request! Missing 'user_input' key."}),
+                400,
+            )
+        user_input = req.get("user_input")
+    else:
+        return jsonify({"message": "Content-Type not supported!"}), 406
+    
+    if  not isinstance(user_input, str): 
+        return (
+            jsonify({"message": "Invalid data type for  'user_input' field. Must be a valid string."}),
+            400,
+        )
+    messages = [
+    {"role": "system", "content": "you are a very helpful and professional assistant"},
+    {"role": "user", "content": user_input}
+        ]
+
+    try:
+        result = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", messages=messages, temperature=0.5, max_tokens=200
+        )
+        user.credits -= 1
+        user.update()
+        return jsonify({"message":result}), 201
+    except RateLimitError:
+        return (
+            jsonify(
+                content="The server is experiencing a high volume of requests. Please try again later."
+            ),
+            400,
+        )
+    except Exception as e:
+        return jsonify(content="An unexpected error occurred. Please try again later."), 500
+
+
+@conversation.route("/cron", methods=["GET"])
 def cron():
     return {"hello":"world"}
-    
