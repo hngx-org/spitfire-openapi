@@ -1,8 +1,9 @@
 from flask import Blueprint, request, session, jsonify, Response
 import openai
-from ..utils import chaaracter_validation, handle_check_credits
+from openapi.utils import get_current_analytics, handle_check_credits
 from openai.error import RateLimitError
 from collections import defaultdict
+import os
 
 conversation = Blueprint("interraction", __name__, url_prefix="/api/chat")
 
@@ -35,11 +36,15 @@ def generate_chat_completion(message):
             "content": message
         }
     ]
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", messages=messages, temperature=0.5, max_tokens=200
-    )
-    return response["choices"][0]["message"]["content"].strip("\n").strip()
+    current_analytics = get_current_analytics()
+    if current_analytics.openai_requests < int(os.getenv("DAILY_LIMIT")):
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", messages=messages, temperature=0.5, max_tokens=200
+        )
+        current_analytics.openai_requests += 1
+        current_analytics.update()
+        return response["choices"][0]["message"]["content"].strip("\n").strip()
+    return "Daily limit reached, please try again tomorrow"
 
 
 #  completion route that handles user inputs and GPT-4 API interactions.
@@ -62,7 +67,6 @@ def interractions(user):
         prompt = req["user_input"]
     else:
         return jsonify({"message": "Content-Type not supported!"}), 406
-    
     
     converse = chat_log.__getitem__(user.id)  # if this doesn't exist it will initialize a new entry in the cache memory chat_log
     converse.append(f"user: {prompt }")
