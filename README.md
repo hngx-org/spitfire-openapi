@@ -204,28 +204,34 @@ The API handles errors gracefully and returns JSON responses with appropriate st
     }
     ```
 ## User Interractions 
-The API receives user Requests and acts as a bridge to gracefully transfer the requests to GPT-3.5 and the AI response is converted to JSON  by the API, which is then sent to the user with appropriate status codes.
+The API receives user Requests(both the chat history stored on the mobile and the current user input) and acts as a bridge to gracefully transfer the requests to GPT-3.5-turbo mo and the AI response is converted to JSON  by the API, which is then sent to the user with appropriate status codes.
+The current user prompt and the AI response is then stored in the chat history on the mobile.
 
 ### Interractions
 -   **Endpoint: /api/chat/completions**
 -    **Description** Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
 - **Request Body**: 
     - **Input**: JSON with the following.
-    ```JSON
-    {
-      "user_input": "what is spitfire?",
-    }
-    ```
+      ```JSON
+      {
+          "history": [
+          "user: Hello!",
+          "AI: Hi! How can I help you today?",
+          "user: I'm looking for information on the latest trends in artificial intelligence.",
+          "AI: Sure, here are some of the latest trends in artificial intelligence"
+          ],
+          "user_input": "what is today's date"
+      }
+        ```
 
 -    **Success Response:**
     - **Status Code**: 201 (Created)
    - **Response**:
       ```JSON
       {
-        "message": "Spitfire can refer to different things, so I'll cover a few possibilities"
-
-      }
-      ```
+          "message": "Today's date is March 8, 2022."
+      } 
+       ```
 ## Authors
 - [@Godhanded](https://github.com/Godhanded)
 - [@Freeman-kuch](https://github.com/Freeman-kuch)

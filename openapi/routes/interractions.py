@@ -7,35 +7,23 @@ import os
 
 conversation = Blueprint("interraction", __name__, url_prefix="/api/chat")
 
-chat_log = defaultdict(list)
-def generate_chat_completion(message):
+chat_logs = defaultdict(list)
+def generate_chat_completion(message, chat_log) -> str:
     """
     Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
 
     Args:
         message (str): The user input message for the chat completion.
+        chat_logs (List[str]): A list of chat logs containing previous messages.
 
     Returns:
         str: The content of the generated response as a string.
-
-    Example:
-        message = "Hello, how are you?"
-        response = generate_chat_completion(message)
-        print(response)
-
-        Expected Output:
-        "Fine, thank you!"
     """
     messages = [
-        # {
-        #     "role": "system",
-        #     "content": "for context puposes my previous : what is Javascript?"
-        # },
-        {
-            "role": "user",
-            "content": message
-        }
+        {"role": "system", "content": f"{chat_log}"},
+        {"role": "user", "content": message}
     ]
+
     current_analytics = get_current_analytics()
     if current_analytics.openai_requests < int(os.getenv("DAILY_LIMIT")):
         response = openai.ChatCompletion.create(
@@ -46,36 +34,41 @@ def generate_chat_completion(message):
         return response["choices"][0]["message"]["content"].strip("\n").strip()
     return "Daily limit reached, please try again tomorrow"
 
-
 #  completion route that handles user inputs and GPT-4 API interactions.
 @conversation.route("/completions", methods=["POST"])
 @handle_check_credits(session)
 def interractions(user):
     """
-    Process user input using the GPT-4 API and return the response as a JSON object.
+    Process user input using the GPT-3.5-turbo API and return the response as a JSON object.
 
+    :param user: The user object containing information about the current user.
     :return: JSON object with the response from the GPT-4 API
     """
     content_type = request.headers.get("Content-Type")
     if content_type == "application/json":
         req = request.get_json()
-        if "user_input" not in req:
+        if "user_input" and "history" not in req:
             return (
-                jsonify({"message": "Invalid request! Missing 'user_input' key."}),
+                jsonify({"message": "Invalid request! Missing 'user_input' or 'history' key."}),
                 400,
             )
-        prompt = req["user_input"]
+        history = req.get("history")
+        user_input = req.get("user_input")
     else:
         return jsonify({"message": "Content-Type not supported!"}), 406
     
-    converse = chat_log.__getitem__(user.id)  # if this doesn't exist it will initialize a new entry in the cache memory chat_log
-    converse.append(f"user: {prompt }")
-    text_prompt = "\n".join(converse)
-    
+    if not isinstance(history, list) and not isinstance(user_input, str): 
+        return (
+            jsonify({"message": "Invalid data type for 'history' or 'user_input' field. Must be a valid array or string."}),
+            400,
+        )
+    converse = chat_logs.__getitem__(user.id)
+    converse.clear()
+    converse.append(history)
     
     try:
-        result= generate_chat_completion(message=text_prompt)
-        converse.append(f"AI: {result}")
+        result= generate_chat_completion(message=user_input, chat_log=history)
+        # converse.append(f"AI: {result}")
         user.credits -= 1
         user.update()
         return jsonify({"message":result}), 201
@@ -87,7 +80,6 @@ def interractions(user):
             400,
         )
     except Exception as e:
-        # print(e)
         return jsonify(content="An unexpected error occurred. Please try again later."), 500
 
 
