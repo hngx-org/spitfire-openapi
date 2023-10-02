@@ -1,4 +1,3 @@
-from typing import List
 from flask import Blueprint, request, session, jsonify, Response
 import openai
 from openapi.utils import get_current_analytics, handle_check_credits
@@ -8,8 +7,8 @@ import os
 
 conversation = Blueprint("interraction", __name__, url_prefix="/api/chat")
 
-chat_log = defaultdict(list)
-def generate_chat_completion(message: str, chat_logs: List[str]) -> str:
+chat_logs = defaultdict(list)
+def generate_chat_completion(message, chat_log) -> str:
     """
     Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
 
@@ -21,35 +20,26 @@ def generate_chat_completion(message: str, chat_logs: List[str]) -> str:
         str: The content of the generated response as a string.
     """
     messages = [
-        {"role": "system", "content": "\n".join(chat_logs)},
+        {"role": "system", "content": f"{chat_log}"},
         {"role": "user", "content": message}
     ]
 
     current_analytics = get_current_analytics()
-    daily_limit = int(os.getenv("DAILY_LIMIT"))
-
-    if current_analytics.openai_requests < daily_limit:
+    if current_analytics.openai_requests < int(os.getenv("DAILY_LIMIT")):
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            temperature=0.5,
-            max_tokens=200
+            model="gpt-3.5-turbo", messages=messages, temperature=0.5, max_tokens=200
         )
-
         current_analytics.openai_requests += 1
         current_analytics.update()
-
         return response["choices"][0]["message"]["content"].strip("\n").strip()
-
     return "Daily limit reached, please try again tomorrow"
-
 
 #  completion route that handles user inputs and GPT-4 API interactions.
 @conversation.route("/completions", methods=["POST"])
 @handle_check_credits(session)
 def interractions(user):
     """
-    Process user input using the GPT-4 API and return the response as a JSON object.
+    Process user input using the GPT-3.5-turbo API and return the response as a JSON object.
 
     :param user: The user object containing information about the current user.
     :return: JSON object with the response from the GPT-4 API
@@ -72,13 +62,12 @@ def interractions(user):
             jsonify({"message": "Invalid data type for 'history' or 'user_input' field. Must be a valid array or string."}),
             400,
         )
-    
-    converse = chat_log.__getitem__(user.id)
+    converse = chat_logs.__getitem__(user.id)
     converse.clear()
     converse.append(history)
     
     try:
-        result= generate_chat_completion(message=user_input, chat_logs=history)
+        result= generate_chat_completion(message=user_input, chat_log=history)
         # converse.append(f"AI: {result}")
         user.credits -= 1
         user.update()
