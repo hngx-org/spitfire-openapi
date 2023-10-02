@@ -113,7 +113,7 @@ The API handles errors gracefully and returns JSON responses with appropriate st
 
 ### Authentication
 - Session based Authentication is used
-- A Session Cookie is sent and stored on client after athenticating
+- A Session Cookie is sent in response headers and is to be stored on client after athenticating
 - subsequent requests should come with the cookie in the request headers
 
 - <a href="https://ibb.co/6mc7wYz"><img src="https://i.ibb.co/HVLf476/header.png" alt="header"  width="50%" /></a>
