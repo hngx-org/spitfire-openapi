@@ -7,7 +7,6 @@ import os
 
 conversation = Blueprint("interraction", __name__, url_prefix="/api/chat")
 
-chat_logs = defaultdict(list)
 def generate_chat_completion(message, chat_log) -> str:
     """
     Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
@@ -44,6 +43,7 @@ def interractions(user):
     :param user: The user object containing information about the current user.
     :return: JSON object with the response from the GPT-4 API
     """
+    chat_logs = defaultdict(list)
     content_type = request.headers.get("Content-Type")
     if content_type == "application/json":
         req = request.get_json()
@@ -86,3 +86,4 @@ def interractions(user):
 @conversation.route("/", methods=["GET"])
 def cron():
     return {"hello":"world"}
+    
