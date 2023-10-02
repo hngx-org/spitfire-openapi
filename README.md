@@ -204,10 +204,10 @@ The API handles errors gracefully and returns JSON responses with appropriate st
     }
     ```
 ## User Interractions 
-The API receives user Requests(both the chat history stored on the mobile and the current user input) and acts as a bridge to gracefully transfer the requests to GPT-3.5-turbo mo and the AI response is converted to JSON  by the API, which is then sent to the user with appropriate status codes.
-The current user prompt and the AI response is then stored in the chat history on the mobile.
+The API receives user Requests(both the chat history stored on the mobile and the current user input) and acts as a bridge to gracefully transfer the requests to GPT-3.5-turbo mode and the AI response is converted to JSON  by the API, which is then sent to the user with appropriate status codes.
+The current user prompt and the AI response is then stored in the chat history on the mobile device.
 
-### Interractions
+### Interractions With chat Logs
 -   **Endpoint: /api/chat/completions**
 -    **Description** Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
 - **Request Body**: 
@@ -229,7 +229,26 @@ The current user prompt and the AI response is then stored in the chat history o
    - **Response**:
       ```JSON
       {
-          "message": "Today's date is March 8, 2022."
+          "message": "Today's date is October 2, 2023."
+      } 
+       ```
+### Interractions With a String
+-   **Endpoint: /api/chat/**
+-    **Description** Generates a chat completion using the GPT-3.5-turbo model from OpenAI.
+- **Request Body**: 
+    - **Input**: JSON with the following.
+      ```JSON
+      {
+          "user_input": "what is today's date"
+      }
+        ```
+
+-    **Success Response:**
+    - **Status Code**: 201 (Created)
+   - **Response**:
+      ```JSON
+      {
+          "message": "Today's date is October 2, 2023."
       } 
        ```
 ## Authors
