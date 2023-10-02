@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, jsonify, Response
+from flask import Blueprint, request, session, jsonify
 import openai
 from openapi.utils import get_current_analytics, handle_check_credits
 from openai.error import RateLimitError
