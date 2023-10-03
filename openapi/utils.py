@@ -46,7 +46,9 @@ def handle_check_credits(session=None):
             user_id = user.get("id")
             user = User.query.get(user_id)
             if user.credits <= 0:
-                raise CustomError("Subscription Required", 402, "You do not have enough credits")
+                raise CustomError(
+                    "Subscription Required", 402, "You do not have enough credits"
+                )
 
             return f(user, *args, **kwargs)
 
@@ -114,13 +116,12 @@ def chaaracter_validation(user_input):
     # reduced_word = " ".join(word[:20])
     raise CustomError("payload too long", 413, "the request body is too long")
 
+
 def get_current_analytics():
     """Get the current day's analytic entry from the database"""
     return db.session.execute(
-        db.select(Analytics)
-        .filter(
-            db.Cast(
-                Analytics.created_at, db.Date()
-            ) == date.today().strftime("%Y-%m-%d")
+        db.select(Analytics).filter(
+            db.Cast(Analytics.created_at, db.Date())
+            == date.today().strftime("%Y-%m-%d")
         )
     ).scalar_one_or_none()
