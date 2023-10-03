@@ -3,21 +3,22 @@ from pydantic import BaseModel, EmailStr, constr, validator
 
 class RegisterSchema(BaseModel):
     email: EmailStr
-    name: constr(to_lower=True, min_length=2, max_length=64)
+    name: constr(regex=r'^[a-zA-Z0-9_]+$',to_lower=True, min_length=2, max_length=64)
     password: constr(min_length=8, max_length=64)
-    confirm_password: constr(min_length=8, max_length=64)
+    confirm_password: str
 
     @validator("email")
-    def valid_email_length(cls, v):
-        if len(v) > 345:
+    def valid_email_length(cls, email):
+        if len(email) > 345:
             raise ValueError("Invalid email length")
-        return v
+        return email
+    
 
     @validator("confirm_password")
-    def check_confirm_password(cls, v, values, **kwargs):
-        if v != values["password"]:
-            raise ValueError("Passwords does not match")
-        return v
+    def passwords_are_same(cls, confirm_password,values, **kwargs):
+        if "password" in values and confirm_password != values["password"]:
+            raise ValueError("Passwords do not match")
+        return confirm_password
 
 
 class LoginSchema(BaseModel):

@@ -40,6 +40,27 @@ The API handles errors gracefully and returns JSON responses with appropriate st
   "message": "Invalid input data."
 }
 ```
+
+### 400 Bad Request
+- **Status Code**: 400
+- **Response**:
+
+```JSON
+{
+  "error": "Bad Request",
+  "message": [
+    {
+      "error": "ensure this value has at least 2 characters",
+      "field": "name"
+    },
+    {
+      "error": "Passwords do not match",
+      "field": "confirm_password"
+    }
+  ]
+}
+```
+
 ### 402 Payment Required
 - **Status Code**: 402
 - **Response**:
