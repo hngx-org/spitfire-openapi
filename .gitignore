@@ -171,4 +171,4 @@ flask_session
 bruv
 instance/
 .DS_Store
-test.py
+test*.py
