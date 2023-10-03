@@ -6,6 +6,7 @@ from datetime import date
 
 analytics = Blueprint("analytics", __name__, url_prefix="/api/analytics")
 
+
 @analytics.route("/")
 def reset_each_day():
     """create a new analytics field each day"""
@@ -15,5 +16,5 @@ def reset_each_day():
         new_analytics = Analytics()
         new_analytics.insert()
         return "success"
-    
+
     return "Today's Analytics already exists"

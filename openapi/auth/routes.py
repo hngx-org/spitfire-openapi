@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify, session
-from openapi import db, bcrypt
+from openapi import bcrypt
 from openapi.models.user import User
+from pydantic import ValidationError
+from openapi.schemas import RegisterSchema, LoginSchema
 from openapi.errors.handlers import CustomError
 from openapi.utils import requires_auth
 
@@ -27,28 +29,19 @@ def register():
     """
 
     data = request.get_json() if request.get_json() != None else request.form
-    name = data.get("name")
-    email = data.get("email")
-    password = data.get("password")
-    confirm_password = data.get("confirm_password")
-    if not name or not email or not password:
-        raise CustomError("Bad Request", 400, "Missing required fields!")
-
-    # Check if password and password confirmation match
-    if password != confirm_password:
-        raise CustomError("Bad Request", 400, "Passwords do not match!")
-
     try:
-        email_exists = User.query.filter_by(email=email).one_or_none()
+        data = RegisterSchema(**data)
+
+        email_exists = User.query.filter_by(email=data.email).one_or_none()
         if email_exists:
             return (
                 jsonify({"error": "Forbbiden", "message": "Email already exists!"}),
                 403,
             )
 
-        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+        hashed_password = bcrypt.generate_password_hash(data.password).decode("utf-8")
 
-        new_user = User(name, email, hashed_password)
+        new_user = User(data.name, data.email, hashed_password)
         new_user.insert()
 
         session["user"] = {"id": new_user.id}
@@ -62,7 +55,14 @@ def register():
             ),
             201,
         )
-
+    except ValidationError as e:
+        msg = ""
+        for err in e.errors():
+            msg += f"{str(err.get('loc')).strip('(),')}:{err.get('msg')}, "
+        return (
+            jsonify({"error": "Bad Request", "message": msg}),
+            400,
+        )
     except Exception as error:
         print(f"{type(error).__name__}: {error}")
         return (
@@ -98,18 +98,24 @@ def login_user():
             A JSON response with status 400 (Bad Request) and an error message.
     """
     data = request.get_json()
-    # validate the data received
-    if "email" not in data or "password" not in data:
-        raise CustomError("Bad Request", 400, "Missing required fields")
+    try:
+        # validate the data received
+        data = LoginSchema(**data)
 
-    email = data.get("email")
-    password = data.get("password")
-    user = User.query.filter_by(email=email).one_or_none()
+    except ValidationError as e:
+        msg = ""
+        for err in e.errors():
+            msg += f"{str(err.get('loc')).strip('(),')}:{err.get('msg')}, "
+        return (
+            jsonify({"error": "Bad Request", "message": msg}),
+            400,
+        )
+    user = User.query.filter_by(email=data.email).one_or_none()
     if not user:
         raise CustomError(
             "Resource not Found", 404, "User with this email does not exist"
         )
-    if not bcrypt.check_password_hash(user.password, password):
+    if not bcrypt.check_password_hash(user.password, data.password):
         raise CustomError("Unauthorized", 401, "Incorrect password")
     session["user"] = {"id": user.id}
     return (jsonify({"message": "success", "data": user.format()}), 200)

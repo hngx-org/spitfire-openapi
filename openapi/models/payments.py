@@ -8,7 +8,6 @@ class Payments(BaseModel):
     user_id = db.Column(db.String(60), db.ForeignKey("users.id"), nullable=False)
     amount = db.Column(db.Numeric(6, 2), nullable=False)
 
-
     def __repr__(self):
         return "id: {}, user_id: {}, amount: {}, created_at: {},\
               updated_at: {}".format(
