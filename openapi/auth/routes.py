@@ -56,9 +56,16 @@ def register():
             201,
         )
     except ValidationError as e:
-        msg = ""
+        msg = []
         for err in e.errors():
-            msg += f"{str(err.get('loc')).strip('(),')}:{err.get('msg')}, "
+            field=err["loc"][0]
+            error=err["msg"]
+            if "regex" in error:
+                error="Invalid input format,a-z 0-9 _ only"
+            msg.append({
+                "field": field,
+                "error":error
+            })
         return (
             jsonify({"error": "Bad Request", "message": msg}),
             400,
@@ -103,9 +110,12 @@ def login_user():
         data = LoginSchema(**data)
 
     except ValidationError as e:
-        msg = ""
+        msg = []
         for err in e.errors():
-            msg += f"{str(err.get('loc')).strip('(),')}:{err.get('msg')}, "
+            msg.append({
+                "field": err["loc"][0],
+                "error":err["msg"]
+            })
         return (
             jsonify({"error": "Bad Request", "message": msg}),
             400,
