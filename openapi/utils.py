@@ -110,11 +110,10 @@ def get_current_analytics():
 def handle_check_subscription(user):
     """Confirm subcription status of user"""
     payment = db.session.execute(
-        db.Select(Payments).filter_by(user_id=user.id)
+        db.Select(Payments).filter_by(user_id=user.get("id"))
                             .order_by(db.desc(Payments.created_at))
-                            .scalar_one_or_none()
-    )
-    print(payment)
+    ).scalar_one_or_none()
+    # print(f"payment:  {payment}") 
     if payment is None:
         # This means user is still on free trial and hasn't
         # made any payment at all
@@ -136,7 +135,7 @@ def handle_check_credits(session=None):
             user = session.get("user")
             if not user:
                 raise CustomError("Unauthorized", 401, "You are not logged in")
-            if handle_check_subscription() is True:
+            if handle_check_subscription(user) is True:
                 user_id = user.get("id")
                 user = User.query.get(user_id)
                 if user.credits <= 0:
