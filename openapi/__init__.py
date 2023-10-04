@@ -54,11 +54,13 @@ def create_app():
     from openapi.errors.handlers import error
     from openapi.routes.interractions import conversation
     from openapi.routes.analytics import analytics
+    from openapi.payment.routes import payments
 
     app.register_blueprint(auth)
     app.register_blueprint(error)
     app.register_blueprint(conversation)
     app.register_blueprint(analytics)
+    app.register_blueprint(payments)
 
     # create db tables from models if not exists
     with app.app_context():

@@ -24,3 +24,13 @@ class RegisterSchema(BaseModel):
 class LoginSchema(BaseModel):
     email: EmailStr
     password: constr(min_length=8, max_length=64)
+
+
+
+class CreatePaymentSchema(BaseModel):
+    paymentToken : constr(min_length=4, max_length=21) 
+    @validator("paymentToken")
+    def validate_token(cls, paymentToken):
+        if paymentToken != "examplepaymenttoken":
+            raise ValueError("Invalid Payment Token")
+        return paymentToken
