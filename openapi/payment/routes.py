@@ -1,4 +1,5 @@
-from flask import Flask, Blueprint, jsonify, session,request
+"""Payment route handlers"""
+from flask import Blueprint, jsonify, session, request
 from openapi.models.user import User
 from openapi.errors.handlers import CustomError
 from openapi.schemas  import CreatePaymentSchema
@@ -13,6 +14,7 @@ payments = Blueprint("payments", __name__, url_prefix="/api/payments")
 @payments.route("/", methods=["POST"])
 @requires_auth(session)
 def create_payment(user_id):
+    """create payment"""
     data = request.get_json()
     # TODO: Collect payment details and confirm from client
 
