@@ -1,8 +1,7 @@
 from flask import Blueprint
 from openapi.models.analytics import Analytics
 from openapi.utils import get_current_analytics
-from openapi import db
-from datetime import date
+
 
 analytics = Blueprint("analytics", __name__, url_prefix="/api/analytics")
 

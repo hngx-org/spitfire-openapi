@@ -1,8 +1,9 @@
+"""Openai interactions module"""
 from flask import Blueprint, request, session, jsonify
 import openai
-from openapi.utils import get_current_analytics, handle_check_credits
 from openai.error import RateLimitError
 from collections import defaultdict
+from openapi.utils import get_current_analytics, handle_check_credits
 import os
 
 conversation = Blueprint("interraction", __name__, url_prefix="/api/chat")
@@ -89,7 +90,7 @@ def interractions(user):
             ),
             400,
         )
-    except Exception as e:
+    except Exception as error:
         return (
             jsonify(content="An unexpected error occurred. Please try again later."),
             500,
@@ -149,7 +150,7 @@ def string_completion(user):
             ),
             400,
         )
-    except Exception as e:
+    except Exception as error:
         return (
             jsonify(content="An unexpected error occurred. Please try again later."),
             500,
